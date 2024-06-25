@@ -471,12 +471,304 @@ endclass
 
 
 
+class miimoder_reg extends uvm_reg;
+  `uvm_object_utils(miimoder_reg)
+
+  // Register fields
+  uvm_reg_field miinopre;
+  uvm_reg_field clkdiv;
+
+  // Constructor
+  function new(string name = "miimoder_reg");
+    super.new(name, , UVM_NO_COVERAGE);
+  endfunction
+
+  // Build function
+  virtual function void build();
+    // Create MIINOPRE field
+    miinopre = uvm_reg_field::type_id::create("miinopre");
+    // Configure MIINOPRE field
+    miinopre.configure(this,      // Parent register block
+                       1,         // Size: 1 bit wide
+                       8,         // LSB position: starts at bit 8
+                       "RW",      // Access policy: Read/Write
+                       1,         // Volatile: field value can change unpredictably
+                       1'h0,      // Reset value: default MIINOPRE value (0)
+                       1,         // Has reset: field value is reset on system reset
+                       1,         // Is rand: field value can be randomized during testing
+                       0);        // Individually accessible: field occupies its byte lane
+
+    // Create CLKDIV field
+    clkdiv = uvm_reg_field::type_id::create("clkdiv");
+    // Configure CLKDIV field
+    clkdiv.configure(this,      // Parent register block
+                     8,         // Size: 8 bits wide
+                     0,         // LSB position: starts at bit 0
+                     "RW",      // Access policy: Read/Write
+                     1,         // Volatile: field value can change unpredictably
+                     8'h64,     // Reset value: default CLKDIV value (0x64)
+                     1,         // Has reset: field value is reset on system reset
+                     1,         // Is rand: field value can be randomized during testing
+                     0);        // Individually accessible: field occupies its byte lane
+  endfunction
+endclass
+
+
+
+class miicommand_reg extends uvm_reg;
+  `uvm_object_utils(miicommand_reg)
+
+  // Register fields
+  uvm_reg_field wctrldata;
+  uvm_reg_field rstat;
+  uvm_reg_field scanstat;
+
+  // Constructor
+  function new(string name = "miicommand_reg");
+    super.new(name, 8, UVM_NO_COVERAGE);
+  endfunction
+
+  // Build function
+  virtual function void build();
+    // Create fields
+    wctrldata = uvm_reg_field::type_id::create("wctrldata");
+    rstat = uvm_reg_field::type_id::create("rstat");
+    scanstat = uvm_reg_field::type_id::create("scanstat");
+
+    // Configure fields
+    wctrldata.configure(this, 1, 2, "RW", 1, 1'h0, 1, 1, 0);  // 1 bit wide, LSB position 2
+    rstat.configure(this, 1, 1, "RW", 1, 1'h0, 1, 1, 0);        // 1 bit wide, LSB position 1
+    scanstat.configure(this, 1, 0, "RW", 1, 1'h0, 1, 1, 0);     // 1 bit wide, LSB position 0
+  endfunction
+endclass
+
+class miiaddress_reg extends uvm_reg;
+  `uvm_object_utils(miiaddress_reg)
+
+  // Register fields
+  uvm_reg_field rgad;
+  uvm_reg_field fiad;
+
+  // Constructor
+  function new(string name = "miiaddress_reg");
+    super.new(name, 13, UVM_NO_COVERAGE);
+  endfunction
+
+  // Build function
+  virtual function void build();
+    // Create fields
+    rgad = uvm_reg_field::type_id::create("rgad");
+    fiad = uvm_reg_field::type_id::create("fiad");
+
+    // Configure fields
+    // Configure RGAD field
+    rgad.configure(this, 5, 8, "RW", 1, 5'h0, 1, 1, 0);   // 5 bits wide, LSB position 8
+
+    // Configure FIAD field
+    fiad.configure(this, 5, 0, "RW", 1, 5'h0, 1, 1, 0);   // 5 bits wide, LSB position 0
+  endfunction
+endclass
+
+
+class miitx_data_reg extends uvm_reg;
+  `uvm_object_utils(miitx_data_reg)
+
+  // Register fields
+  uvm_reg_field ctrldata;
+
+  // Constructor
+  function new(string name = "miitx_data_reg");
+    super.new(name, 16, UVM_NO_COVERAGE);
+  endfunction
+
+  // Build function
+  virtual function void build();
+    // Create field
+    ctrldata = uvm_reg_field::type_id::create("ctrldata");
+
+    // Configure field
+    ctrldata.configure(this, 16, 0, "RW", 1, 16'h0, 1, 1, 0);   // 16 bits wide, LSB position 0
+  endfunction
+endclass
+
+
+
+class miirx_data_reg extends uvm_reg;
+  `uvm_object_utils(miirx_data_reg)
+
+  // Register fields
+  uvm_reg_field prsd;
+
+  // Constructor
+  function new(string name = "miirx_data_reg");
+    super.new(name, 32, UVM_NO_COVERAGE);
+  endfunction
+
+  // Build function
+  virtual function void build();
+    // Create field
+    prsd = uvm_reg_field::type_id::create("prsd");
+
+    // Configure field
+    prsd.configure(this, 16, 0, "RO", 0, 16'h0, 1, 1, 0);   // 16 bits wide, LSB position 0
+  endfunction
+endclass
+
+
+class miistatus_reg extends uvm_reg;
+  `uvm_object_utils(miistatus_reg)
+
+  // Register fields
+  uvm_reg_field nvalid;
+  uvm_reg_field busy;
+  uvm_reg_field linkfail;
+
+  // Constructor
+  function new(string name = "miistatus_reg");
+    super.new(name, 32, UVM_NO_COVERAGE);
+  endfunction
+
+  // Build function
+  virtual function void build();
+    // Create fields
+    nvalid = uvm_reg_field::type_id::create("nvalid");
+    busy = uvm_reg_field::type_id::create("busy");
+    linkfail = uvm_reg_field::type_id::create("linkfail");
+
+    // Configure fields
+    nvalid.configure(this, 1, 2, "RO", 1, 1'h0, 1, 1, 0);   // 1 bit wide, LSB position 2
+    busy.configure(this, 1, 1, "RO", 1, 1'h0, 1, 1, 0);     // 1 bit wide, LSB position 1
+    linkfail.configure(this, 1, 0, "RO", 1, 1'h0, 1, 1, 0); // 1 bit wide, LSB position 0
+  endfunction
+endclass
 
 
 
 
+class macaddr0_reg extends uvm_reg;
+  `uvm_object_utils(macaddr0_reg)
+
+  // Register fields
+  uvm_reg_field byte2;
+  uvm_reg_field byte3;
+  uvm_reg_field byte4;
+  uvm_reg_field byte5;
+
+  // Constructor
+  function new(string name = "macaddr0_reg");
+    super.new(name, 8, UVM_NO_COVERAGE);
+  endfunction
+
+  // Build function
+  virtual function void build();
+    // Create fields
+    byte2 = uvm_reg_field::type_id::create("byte2");
+    byte3 = uvm_reg_field::type_id::create("byte3");
+    byte4 = uvm_reg_field::type_id::create("byte4");
+    byte5 = uvm_reg_field::type_id::create("byte5");
+
+    // Configure fields
+    byte2.configure(this, 8, 24, "RW", 1, 8'h00, 1, 1, 0);  // 8 bits wide, LSB position 24
+    byte3.configure(this, 8, 16, "RW", 1, 8'h00, 1, 1, 0);  // 8 bits wide, LSB position 16
+    byte4.configure(this, 8, 8, "RW", 1, 8'h00, 1, 1, 0);   // 8 bits wide, LSB position 8
+    byte5.configure(this, 8, 0, "RW", 1, 8'h00, 1, 1, 0);   // 8 bits wide, LSB position 0
+  endfunction
+endclass
 
 
+class macaddr1_reg extends uvm_reg;
+  `uvm_object_utils(macaddr1_reg)
+
+  // Register fields
+  uvm_reg_field byte0;
+  uvm_reg_field byte1;
+
+  // Constructor
+  function new(string name = "macaddr1_reg");
+    super.new(name, 16, UVM_NO_COVERAGE);
+  endfunction
+
+  // Build function
+  virtual function void build();
+    // Create fields
+    byte0 = uvm_reg_field::type_id::create("byte0");
+    byte1 = uvm_reg_field::type_id::create("byte1");
+
+    // Configure fields
+    byte0.configure(this, 8, 8, "RW", 1, 8'h0, 1, 1, 0);   // 8 bits wide, LSB position 8
+    byte1.configure(this, 8, 0, "RW", 1, 8'h0, 1, 1, 0);   // 8 bits wide, LSB position 0
+  endfunction
+endclass
+
+
+class hash0_reg extends uvm_reg;
+  `uvm_object_utils(hash0_reg)
+
+  // Register fields
+  uvm_reg_field hash0;
+
+  // Constructor
+  function new(string name = "hash0_reg");
+    super.new(name, 32, UVM_NO_COVERAGE);
+  endfunction
+
+  // Build function
+  virtual function void build();
+    // Create field
+    hash0 = uvm_reg_field::type_id::create("hash0");
+
+    // Configure field
+    hash0.configure(this, 8, 32, "RW", 1, 32'h0, 1, 1, 0);   // 32 bits wide, LSB position 0
+  endfunction
+endclass
+
+
+class hash1_reg extends uvm_reg;
+  `uvm_object_utils(hash1_reg)
+
+  // Register fields
+  uvm_reg_field hash1;
+
+  // Constructor
+  function new(string name = "hash1_reg");
+    super.new(name, 32, UVM_NO_COVERAGE);
+  endfunction
+
+  // Build function
+  virtual function void build();
+    // Create field
+    hash1 = uvm_reg_field::type_id::create("hash1");
+
+    // Configure field
+    hash1.configure(this,32, 0, "RW", 1, 32'h0, 1, 1, 0);   // 32 bits wide, LSB position 0
+  endfunction
+endclass
+
+
+
+class txctrl_reg extends uvm_reg;
+  `uvm_object_utils(txctrl_reg)
+
+  // Register fields
+  uvm_reg_field txpauserq;
+  uvm_reg_field txpausetv;
+
+  // Constructor
+  function new(string name = "txctrl_reg");
+    super.new(name, , UVM_NO_COVERAGE);
+  endfunction
+
+  // Build function
+  virtual function void build();
+    // Create fields
+    txpauserq = uvm_reg_field::type_id::create("txpauserq");
+    txpausetv = uvm_reg_field::type_id::create("txpausetv");
+
+    // Configure fields
+	txpausetv.configure(this, 16, 0, "RW", 1, 16'h0, 1, 1, 0); // 16 bits wide, LSB position 0
+    txpauserq.configure(this, 1, 16, "RW", 1, 1'h0, 1, 1, 0);    // 1 bit wide, LSB position 16
+  endfunction
+endclass
 
 
 
@@ -491,5 +783,291 @@ endclass
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class mac_reg_block extends uvm_reg_block;
+  `uvm_object_utils(mac_reg_block)
 
+  // Register instances
+  moder_reg moder;
+  intsrc_reg intsrc;
+  intmask_reg intmask;
+  ipgt_reg ipgt;
+  ipgr1_reg ipgr1;
+  ipgr2_reg ipgr2;
+  packetlen_reg packetlen;
+  collconf_reg collconf;
+  txbdnum_reg txbdnum;
+  ctrlmoder_reg ctrlmoder;
+  miimoder_reg miimoder;
+  miicommand_reg miicommand;
+  miiaddress_reg miiaddress;
+  miitx_data_reg miitx_data;
+  miirx_data_reg miirx_data;
+  miistatus_reg miistatus;
+  macaddr0_reg macaddr0;
+  macaddr1_reg macaddr1;
+  hash0_reg hash0;
+  hash1_reg hash1;
+  txctrl_reg txctrl;
+
+  uvm_reg_map wb_map; //registers are accessing using WB interface.
+
+  // Constructor
+  function new(string name = "mac_reg_block");
+    super.new(name,build_coverage (UVM_CVR_ADDR_MAP));
+  endfunction
+
+  // Build function
+  virtual function void build();
+  
+  string s;
+  
+  moder=csr_reg::type_id::create("moder");
+  moder.configure(this, null,"");
+  moder.build();
+  
+  for(int i= 0; i<17; i++) begin // for backdoor access
+	$sformat(s, "MODERout[%0d]",i);
+	moder.add_hdl_path_slice(s,i,1);
+  end
+  
+  
+  intsrc=csr_reg::type_id::create("intsrc");
+  intsrc.configure(this, null,"");
+  intsrc.build();
+  
+  // for backdoor access///////////////
+  for(int i= 0; i<17; i++) begin 
+	$sformat(s, "INT_SOURCEOut[%0d]",i);
+	intsrc.add_hdl_path_slice(s,i,1);
+  end
+  /////////////////////////////////////
+  int_mask=int_msk_reg::type_id::create("int_mask");
+  int_mask.configure(this, null,"");
+  int_mask.build( );
+  
+  // for backdoor access///////////////
+  for(int i= 0; i<7; i++) begin 
+	$sformat(s, "INT_MASKOut[%0d]",i);
+	int_mask.add_hdl_path_slice(s,i,1);
+  end
+  /////////////////////////////////////
+  
+  ipgt=ipgt_reg::type_id::create("ipgt");
+  ipgt.configure(this, null,"");
+  ipgt.build( );
+  // for backdoor access///////////////
+  for(int i= 0; i<7; i++) begin 
+	$sformat(s, "IPGTOut[%0d]",i);
+	ipgt.add_hdl_path_slice(s,i,1);
+  end
+  /////////////////////////////////////
+  
+  
+  ipgr1=ipgr1_reg::type_id::create("ipgr1");
+  ipgr1.configure(this, null,"");
+  ipgr1.build( );
+  
+    // for backdoor access///////////////
+  for(int i= 0; i<7; i++) begin 
+	$sformat(s, "IPGR1Out[%0d]",i);
+	ipgr1.add_hdl_path_slice(s,i,1);
+  end
+  /////////////////////////////////////
+  
+  ipgr2=ipgr2_reg::type_id::create("ipgr2");
+  ipgr2.configure(this, null,"");
+  ipgr2.build( );
+  
+    // for backdoor access///////////////
+  for(int i= 0; i<7; i++) begin 
+	$sformat(s, "IPGR2Out[%0d]",i);
+	ipgr2.add_hdl_path_slice(s,i,1);
+  end
+  /////////////////////////////////////
+  
+  
+  packetlen=packetlen_reg::type_id::create("packetlen");
+  packetlen.configure(this, null,"");
+  packetlen.build( );
+  
+    // for backdoor access///////////////
+  for(int i= 0; i<7; i++) begin 
+	$sformat(s, "PACKETLENOut[%0d]",i);
+	packetlen.add_hdl_path_slice(s,i,1);
+  end
+  /////////////////////////////////////
+  
+  
+  collconf=collconf_reg::type_id::create("collconf");
+  collconf.configure(this, null,"");
+  collconf.build( );
+  
+  // for backdoor access///////////////
+  for(int i= 0; i<7; i++) begin 
+	$sformat(s, "COLLCONFOut[%0d]",i);
+	packetlen.add_hdl_path_slice(s,i,1);
+  end
+  /////////////////////////////////////
+  
+  txbdnum=txbdnum_reg::type_id::create("txbdnum");
+  txbdnum.configure(this, null,"");
+  txbdnum.build( );
+  // for backdoor access///////////////
+  for(int i= 0; i<7; i++) begin 
+	$sformat(s, "TX_BD_NUMOut[%0d]",i);
+	packetlen.add_hdl_path_slice(s,i,1);
+  end
+   
+  /////////////////////////////////////
+  
+  ctrlmoder=ctrlmoder_reg::type_id::create("ctrlmoder");
+  ctrlmoder.configure(this, null,"");
+  ctrlmoder.build( );
+  // for backdoor access///////////////
+  for(int i= 0; i<7; i++) begin 
+	$sformat(s, "CTRLMODEROut[%0d]",i);
+	ctrlmoder.add_hdl_path_slice(s,i,1);
+  end
+  /////////////////////////////////////  
+  
+  miimoder=miimoder_reg::type_id::create("miimoder");
+  miimoder.configure(this, null,"");
+  miimoder.build( );
+  // for backdoor access///////////////
+  for(int i= 0; i<7; i++) begin 
+	$sformat(s, "MIIMODEROut[%0d]",i);
+	packetlen.add_hdl_path_slice(s,i,1);
+  end
+  /////////////////////////////////////  
+  miicommand=miicommand_reg::type_id::create("miicommand");
+  miicommand.configure(this, null,"");
+  miicommand.build( );
+  // for backdoor access///////////////
+  for(int i= 0; i<7; i++) begin 
+	$sformat(s, "MIICOMMANDOut[%0d]",i);
+	miicommand.add_hdl_path_slice(s,i,1);
+  end
+  /////////////////////////////////////
+  
+  
+  miitx_data=miitx_data_reg::type_id::create("miitx_data");
+  miitx_data.configure(this, null,"");
+  miitx_data.build( );
+  // for backdoor access///////////////
+  for(int i= 0; i<7; i++) begin 
+	$sformat(s, "MIITX_DATAOut[%0d]",i);
+	miitx_data.add_hdl_path_slice(s,i,1);
+  end
+  /////////////////////////////////////
+  
+  miirx_data=miirx_data_reg::type_id::create("miirx_data");
+  miirx_data.configure(this, null,"");
+  miirx_data.build( );
+  // for backdoor access///////////////
+  for(int i= 0; i<7; i++) begin 
+	$sformat(s, "MIIRX_DATAOut[%0d]",i);
+	miirx_data.add_hdl_path_slice(s,i,1);
+  end
+  /////////////////////////////////////  
+  
+  miistatus=miistatus_reg::type_id::create("miistatus");
+  miistatus.configure(this, null,"");
+  miistatus.build( );
+  // for backdoor access///////////////
+  for(int i= 0; i<7; i++) begin 
+	$sformat(s, "MIISTATUSOut[%0d]",i);
+	miistatus.add_hdl_path_slice(s,i,1);
+  end
+  /////////////////////////////////////  
+  
+  macaddr0=macaddr0_reg::type_id::create("macaddr0");
+  macaddr0.configure(this, null,"");
+  macaddr0.build( );
+  // for backdoor access///////////////
+  for(int i= 0; i<7; i++) begin 
+	$sformat(s, "MAC_ADDR0Out[%0d]",i);
+	macaddr0.add_hdl_path_slice(s,i,1);
+  end
+  /////////////////////////////////////  
+  
+  macaddr1=macaddr1_reg::type_id::create("macaddr1");
+  macaddr1.configure(this, null,"");
+  macaddr1.build( );
+  // for backdoor access///////////////
+  for(int i= 0; i<7; i++) begin 
+	$sformat(s, "MAC_ADDR1Out[%0d]",i);
+	macaddr1.add_hdl_path_slice(s,i,1);
+  end
+  /////////////////////////////////////  
+  
+  hash0=hash0_reg::type_id::create("hash0");
+  hash0.configure(this, null,"");
+  hash0.build( );
+  // for backdoor access///////////////
+  for(int i= 0; i<7; i++) begin 
+	$sformat(s, "HASH0Out[%0d]",i);
+	hash0.add_hdl_path_slice(s,i,1);
+  end
+  /////////////////////////////////////
+
+
+  
+  hash1=hash1_reg::type_id::create("hash1");
+  hash1.configure(this, null,"");
+  hash1.build( );
+
+  // for backdoor access///////////////
+  for(int i= 0; i<7; i++) begin 
+	$sformat(s, "HASH1Out[%0d]",i);
+	hash1.add_hdl_path_slice(s,i,1);
+  end
+  /////////////////////////////////////
+
+
+  
+  txctrl=txctrl_reg::type_id::create("txctrl");
+  txctrl.configure(this, null,"");
+  txctrl.build( );
+  // for backdoor access///////////////
+  for(int i= 0; i<7; i++) begin 
+	$sformat(s, "TXCTRLOut[%0d]",i);
+	txctrl.add_hdl_path_slice(s,i,1);
+  end
+  /////////////////////////////////////
+
+
+  
+  wb_map= create_map("wb_map", 'h0,4,UVM_LITTLE_ENDIAN);
+  wb_map= create_map(moder, 32'h0,"RW");
+  wb_map= create_map(intsrc, 32'h1,"RW");
+  wb_map= create_map(int_mask, 32'h2,"RW");
+  
+  wb_map= create_map(ipgt, 32'h3,"RW");
+  wb_map= create_map(ipgr1, 32'h4,"RW");
+  wb_map= create_map(ipgr2, 32'h5,"RW");
+  
+  wb_map= create_map(packetlen, 32'h6,"RW");
+  wb_map= create_map(collconf, 32'h7,"RW");
+  wb_map= create_map(txbdnum, 32'h8,"RW");
+  
+  wb_map= create_map(ctrlmoder, 32'h9,"RW");
+  wb_map= create_map(miimoder, 32'hA,"RW");
+  wb_map= create_map(miicommand, 32'hB,"RW");
+  wb_map= create_map(miiaddress, 32'hC,"RW");
+  
+  wb_map= create_map(miitx_data, 32'hD,"RW");
+  wb_map= create_map(miirx_data, 32'hE,"RW");
+  wb_map= create_map(miistatus, 32'hF,"RW");
+  wb_map= create_map(macaddr0, 32'h10,"RW");
+  
+  wb_map= create_map(macaddr1, 32'h11,"RW");
+  wb_map= create_map(hash0, 32'h12,"RW");
+  wb_map= create_map(hash1, 32'h13,"RW");
+  wb_map= create_map(txctrl, 32'h14,"RW");
+  
+  
+  add_hdl_path("top_tb.dut.ethreg1", "RTL");
+  
+  lock_model();
+  
+  endfunction
 endclass
