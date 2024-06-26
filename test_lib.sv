@@ -54,7 +54,7 @@ endtask
 endclass
 
 
-//test_reg_wr_rd
+//
 class ethmac_reg_write_read_reg_model_test extends ethmac_base_test;
 `uvm_component_utils(ethmac_reg_write_read_reg_model_test)
 `NEW_COMP
