@@ -161,7 +161,12 @@ uvm_reg_field rxf_m;
 uvm_reg_field txe_m;
 uvm_reg_field txb_m;
 
-covergroup intmask_cg;
+  // Constructor
+  function new(string name = "intmask_reg");
+    super.new(name, 7, UVM_NO_COVERAGE);
+  endfunction
+
+/* covergroup intmask_cg;
 	RXC_CP : coverpoint rxc_m.value {
 		bins RXC_INT_MASKED = {1'b1};
 		bins RXC_INT_ENABLED = {1'b0};
@@ -207,7 +212,8 @@ function void sample(uvm_reg_data_t data,
   if(get_coverage(UVM_CVR_FIELD_VALS)) begin
     intmask_cg.sample();
   end
-endfunction: sample
+endfunction: sample */
+
 //--------------------------------------------------------------------
 // build
 //--------------------------------------------------------------------
