@@ -52,3 +52,20 @@ phase.drop_objection(this);
 endtask
 
 endclass
+
+
+//test_reg_wr_rd
+class ethmac_reg_write_read_reg_model_test extends ethmac_base_test;
+`uvm_component_utils(ethmac_reg_write_read_reg_model_test)
+`NEW_COMP
+
+
+task run_phase(uvm_phase phase);
+wb_reg_write_read_seq	write_read_seq=wb_reg_write_read_reg_model_seq::type_id::create("read_seq");
+phase.raise_objection(this);
+phase.phase_done.set_drain_time(this,100);
+write_read_seq.start(env.proc_agent_i.sqr);
+phase.drop_objection(this);
+endtask
+
+endclass
