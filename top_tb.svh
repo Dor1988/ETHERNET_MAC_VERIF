@@ -4,12 +4,14 @@ import uvm_pkg::*;  // Import all UVM classes and functions
 
 `include "mac.svh"
 `include "ethmac_common.sv"
+`include "mac_reg_model.sv"
 `include "wb_proc_intf.sv"
 `include "wb_mem_intf.sv"
 `include "phy_intf.sv"
 `include "mii_intf.sv"
 
 `include "wb_tx.sv"
+`include "wb_adapter.sv"
 `include "wb_proc_drv.sv"
 `include "wb_proc_sqr.sv"
 `include "wb_proc_seq_lib.sv"
@@ -102,7 +104,7 @@ ethmac_common common= new(); // just done so that new gets called
   end
 
   initial begin
-    run_test("ethmac_reg_write_read_test");
+    run_test("mac_reg_bd_wr_rd_rm_test");
   end
 
 endmodule
