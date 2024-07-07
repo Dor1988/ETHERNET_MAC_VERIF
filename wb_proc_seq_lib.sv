@@ -1,3 +1,5 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 class wb_proc_base_seq extends uvm_sequence#(wb_tx);
 uvm_phase	phase;
 `uvm_object_utils(wb_proc_base_seq) // factory
@@ -12,8 +14,10 @@ endtask
 task post_body();
 if(phase!=null) phase.drop_objection(this);
 endtask
+
 endclass
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class wb_reg_read_seq extends wb_proc_base_seq;
 `uvm_object_utils(wb_reg_read_seq)
@@ -26,10 +30,13 @@ for(int i=0; i<21;i++) begin
 	`uvm_do_with(req,{req.wr_rd==0;req.addr==i;})
 end
 endtask
+
 endclass
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+//wr_rd_test (without regmodel)
 class wb_reg_write_read_seq extends wb_proc_base_seq;
 `uvm_object_utils(wb_reg_write_read_seq)
 `NEW_OBJ 
@@ -49,42 +56,102 @@ end
 endtask
 endclass
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class wb_reg_write_read_reg_model_seq extends wb_proc_base_seq;
+// wr_rd_test frontdoor (with regmodel)
+class wb_reg_wr_rd_rm_seq extends wb_proc_base_seq;
 
 uvm_reg mac_regs[$]; // queue of uvm_reg
-uvm_reg_data_t ref_data[$]; // will be used for compare purpose
+uvm_reg_data_t ref_data; // will be used for compare purpose
 
-`uvm_object_utils(wb_reg_write_read_reg_model_seq)
+rand uvm_reg_data_t data; // will be used for compare purpose
+uvm_status_e status;
+
+`uvm_object_utils(wb_reg_wr_rd_rm_seq)
 `NEW_OBJ 
 
 task body();
-mac_reg_block	mac_rm;
-int [31:0] errors; // used for counting errors
-super.body;
-uvm_resource_db#(mac_reg_block)::read_by_name("GLOBAL", "MAC_RM", mac_rm, this);
-mac_rm.get_registers(mac_regs); // getting all register handles in mac_regs queue
+mac_reg_block	reg_block;
+int errors; // used for counting errors
+super.body();
+uvm_resource_db#(mac_reg_block)::read_by_name("GLOBAL", "MAC_RM", reg_block, this);
+reg_block.get_registers(mac_regs); // getting all register handles in mac_regs queue
+//mac_regs is a queue of 21 registers handles
 
-//set errors to 0
-errors =0;
+	errors =0;//set errors to 0
 
-	mac_regs.shuffle();
+	mac_regs.shuffle(); // this is shuffling the order of the register in the queue of the 21 registers 
 	foreach(mac_regs[i]) begin
-		if (this.randomize()) begin
+		if (!this.randomize()) begin
 			`uvm_error("body", "randomization error")
 		end
-		mac_regs[i].write(status, data, .parent(this)); // performing write 
+		mac_regs[i].write(status, data, .parent(this)); // performing write of random data into the register
+		// uvm_reg_rw kind of object => adapter
 	end
 	mac_regs.shuffle();
+
 	foreach(mac_regs[i]) begin
-		ref_data=mac_regs[i].get(); // the data from the register model
+		ref_data=mac_regs[i].get(); // getting the value stored in the register model
 		mac_regs[i].read(status,data, .parent(this));// get the register value from DUT register
 		if(ref_data!=data) begin
-			``uvm_error("REG_TEST_SEQ:", $sformatf("get/read: Read error for %s: Expected: %0h Actual: %0h", mac_regs[i].get_name(), ref_data,data))
+			`uvm_error("REG_TEST_SEQ:", $sformatf("get/read: Read error for %s: Expected: %0h Actual: %0h", mac_regs[i].get_name(), ref_data,data))
 			errors++;
 		end
 	end
-end
 
 endtask: body
 endclass
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// wr_rd_test backdoor (with regmodel)
+class wb_reg_bd_wr_rd_rm_seq extends wb_proc_base_seq;
+
+uvm_reg mac_regs[$]; // queue of uvm_reg
+uvm_reg_data_t ref_data; // will be used for compare purpose
+
+rand uvm_reg_data_t data; // will be used for compare purpose
+uvm_status_e status;
+
+`uvm_object_utils(wb_reg_bd_wr_rd_rm_seq)
+`NEW_OBJ 
+
+task body();
+mac_reg_block	reg_block;
+int errors; // used for counting errors
+super.body();
+uvm_resource_db#(mac_reg_block)::read_by_name("GLOBAL", "MAC_RM", reg_block, this);
+reg_block.get_registers(mac_regs); // getting all register handles in mac_regs queue
+//mac_regs is a queue of 21 registers handles
+
+	errors =0;//set errors to 0
+
+	mac_regs.shuffle(); // this is shuffling the order of the register in the queue of the 21 registers 
+	
+	foreach(mac_regs[i]) begin
+		if (!this.randomize()) begin
+			`uvm_error("body", "randomization error")
+		end
+		mac_regs[i].poke(status, data, .parent(this)); // performing write of random data into the register
+		// poke: BackDoor write
+	end
+	
+	mac_regs.shuffle();
+	
+	foreach(mac_regs[i]) begin
+		ref_data=mac_regs[i].get(); // getting the value stored in the register model- this is the expected 
+		mac_regs[i].peek(status,data, .parent(this));// peek: BackDoor read, get the register value from DUT register- this is the actual
+		if(ref_data!=data) begin
+			`uvm_error("REG_TEST_SEQ:", $sformatf("get/read: Read error for %s: Expected: %0h Actual: %0h", mac_regs[i].get_name(), ref_data,data))
+			errors++;
+		end
+		else begin
+			`uvm_info("REG_TEST_SEQ:",$psprintf ("register compare passed: %sata=%h", mac_regs[i].get_name(),data),UVM_LOW)
+		end
+	end
+
+endtask: body
+
+endclass
+
+
