@@ -16,8 +16,11 @@ import uvm_pkg::*;  // Import all UVM classes and functions
 `include "wb_proc_sqr.sv"
 `include "wb_proc_seq_lib.sv"
 `include "wb_proc_agent.sv"
+`include "memory.sv"
 `include "wb_mem_agent.sv"
+`include "phy_tx_drv.sv"
 `include "phy_tx_agent.sv"
+`include "phy_rx_drv.sv"
 `include "phy_rx_agent.sv"
 `include "mii_agent.sv"
 `include "ethmac_env.sv"
@@ -96,15 +99,15 @@ ethmac_common common= new(); // just done so that new gets called
   end
 
   initial begin
-    wb_rst = 1;
+    wb_rst = 1; //reset apply 
     repeat (2) @(posedge wb_clk);
-    wb_rst = 0;
-    #5000;
-    $finish;
+    wb_rst = 0; //reset release 
+    // #20000;
+    // $finish;
   end
 
   initial begin
-    run_test("mac_reg_bd_wr_rd_rm_test");
+    run_test("mac_10mbps_fd_tx_test");
   end
 
 endmodule
