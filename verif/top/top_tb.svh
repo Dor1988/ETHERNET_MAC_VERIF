@@ -107,7 +107,7 @@ ethmac_common common= new(); // just done so that new gets called
   end
 
   initial begin
-    run_test("mac_10mbps_fd_tx_test");
+    run_test("mac_100mbps_fd_tx_test");
   end
 
 endmodule
