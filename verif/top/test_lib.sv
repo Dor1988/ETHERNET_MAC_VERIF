@@ -116,7 +116,7 @@ endfunction
 
 
 task run_phase(uvm_phase phase);
-mac_10mbps_fd_tx_seq  fd_tx_seq=mac_10mbps_fd_tx_seq::type_id::create("fd_tx_seq"); //create the sequence
+mac_fd_tx_seq  fd_tx_seq=mac_fd_tx_seq::type_id::create("fd_tx_seq"); //create the sequence
 
 
 phase.raise_objection(this);
@@ -124,6 +124,38 @@ phase.phase_done.set_drain_time(this,100);
 fd_tx_seq.start(env.proc_agent_i.sqr); // runing the sequence
 // I should wait till tx completes, only then end simulation
 #100000;// todo
+phase.drop_objection(this);
+endtask
+
+endclass
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+// //test
+class mac_100mbps_fd_tx_test extends ethmac_base_test;
+`uvm_component_utils(mac_100mbps_fd_tx_test)
+`NEW_COMP
+
+function void build_phase(uvm_phase phase);
+	super.build_phase(phase);
+	// 100mbps will come from 100 MHZ clk=> TP in ns=100ns
+	uvm_resource_db#(int)::set("GLOBAL", "PHY_CLK_TP", 10, this);	
+endfunction
+
+
+
+task run_phase(uvm_phase phase);
+mac_fd_tx_seq  fd_tx_seq=mac_fd_tx_seq::type_id::create("fd_tx_seq"); //create the sequence
+
+
+phase.raise_objection(this);
+phase.phase_done.set_drain_time(this,100);
+fd_tx_seq.start(env.proc_agent_i.sqr); // runing the sequence
+// I should wait till tx completes, only then end simulation
+#20000;// todo
 phase.drop_objection(this);
 endtask
 
