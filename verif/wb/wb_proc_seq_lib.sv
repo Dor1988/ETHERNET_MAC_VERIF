@@ -229,12 +229,12 @@ endclass
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // full duplex sequence
-class mac_10mbps_fd_tx_seq extends wb_proc_base_seq;
+class mac_fd_tx_seq extends wb_proc_base_seq;
 
 uvm_status_e status;
 rand uvm_reg_data_t moder_data; // will be used for compare purpose
 
-`uvm_object_utils(mac_10mbps_fd_tx_seq)
+`uvm_object_utils(mac_fd_tx_seq)
 `NEW_OBJ 
 
 task body();
